@@ -1,6 +1,23 @@
 # update\_cdstats
 
-keep a small textfile with some stats about recently visited directories
+Keep a small textfile with some stats about recently visited directories.
+The file, calles `~/.cdstat` looks like this:
+
+```
+6 1503915638 /Users/xnicollet/stack/git/gitlab/sre/puppet
+5 1503956673 /Users/xnicollet/src/github.com/nicollet
+5 1503920879 /Users/xnicollet/src
+3 1503915652 /Users/xnicollet/stack/git/gitlab
+2 1503956162 /Users/xnicollet/src/github.com/nicollet/update_cdstat
+```
+
+It's organised as: 
+
+* *hit count since we've tracked this directory*,
+* *last modified time in second till epoch*,
+* *full path to the directory*.
+
+The idea is to build better *cd* commands and have smarter auto-complete features.
 
 It's just the go part. It's the same as this bash function:
 
