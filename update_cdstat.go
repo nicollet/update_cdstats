@@ -16,6 +16,9 @@ import (
 	"time"
 )
 
+// TODO: one time out of 2 remove from the stat file all the entries
+// that are not directories anymore
+
 const maxStat = 100
 
 func getStatFilePath() (p string, err error) {
@@ -24,8 +27,8 @@ func getStatFilePath() (p string, err error) {
 		return "", err
 	}
 	p = path.Clean(filepath.Join(usr.HomeDir, ".cdstat"))
-	// fileInfo, err := os.Stat(path)
 	// TODO later: maybe we should test for directory (and symlink)
+	// fileInfo, err := os.Stat(path)
 	return p, nil
 }
 
@@ -42,11 +45,30 @@ type stat struct {
 
 type stats map[string]stat
 
-func updateStats(st stats, count int, date int64, path string) stats {
-	if _, ok := st[path]; ok {
-		st[path] = stat{count: st[path].count + count, date: date}
+// return true if it is a dir,
+// false if not, or if there is an error
+func isDir(p string) bool {
+	fInfo, err := os.Stat(p)
+	if err != nil {
+		return false
+	}
+	return fInfo.IsDir()
+}
+
+func updateStats(st stats, count int, date int64, p string) stats {
+	if !isDir(p) {
+		return st
+	}
+	if len(p) <= 0 {
+		return st
+	}
+	if p[0] != '/' { // we only want absolute paths
+		return st
+	}
+	if _, ok := st[p]; ok {
+		st[p] = stat{count: st[p].count + count, date: date}
 	} else {
-		st[path] = stat{count: count, date: date}
+		st[p] = stat{count: count, date: date}
 	}
 	return st
 }
